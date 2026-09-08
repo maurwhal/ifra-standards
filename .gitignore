@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# PyInstaller (the .exe is built by CI, not committed)
+*.spec
+
+# Output files from running the tool
+ifra_standards.csv
+ifra_standards.json
+*.xlsx
+IFRA Standards *.csv
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local scratch
+*.local.*
+raw.html
+pdfs/

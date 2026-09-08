@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ifra-standards"
+dynamic = ["version"]
+description = "Make a spreadsheet of every IFRA Standard (name, CAS number, type, amendment, PDF link)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "M. Lav." }]
+keywords = ["ifra", "fragrance", "regulatory", "cosmetics", "standards", "cas"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+xlsx = ["openpyxl>=3.1"]
+dev = ["pytest>=7", "ruff>=0.5", "openpyxl>=3.1"]
+
+[project.scripts]
+ifra-standards = "ifra_standards.cli:main"
+ifra-standards-app = "ifra_standards.app:main"
+
+[project.urls]
+Homepage = "https://github.com/maurwhal/ifra-standards"
+Issues = "https://github.com/maurwhal/ifra-standards/issues"
+"Standards Library" = "https://ifrafragrance.org/standards-library"
+
+[tool.hatch.version]
+path = "src/ifra_standards/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ifra_standards"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "PERF", "RUF"]
+ignore = ["B904"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
