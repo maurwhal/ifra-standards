@@ -25,7 +25,20 @@ def _desktop() -> Path:
     return home
 
 
+def _use_utf8_console() -> None:
+    """A plain Windows console defaults to a codepage that cannot print every
+    character IFRA uses in material names (Greek letters like alpha and beta
+    show up often). This does not currently print any Standard's name, but
+    it is cheap insurance against that crashing a future version that does."""
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 def main() -> int:
+    _use_utf8_console()
     # Used by the build to confirm the packaged .exe starts and imports cleanly,
     # without going online.
     if "--check" in sys.argv[1:]:

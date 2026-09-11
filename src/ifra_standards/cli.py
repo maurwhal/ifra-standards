@@ -14,6 +14,18 @@ from .parse import parse_standards
 from .pdfs import download_pdfs
 
 
+def _use_utf8_console() -> None:
+    """A plain Windows console defaults to a codepage that cannot print every
+    character IFRA uses in material names (Greek letters like alpha and beta
+    show up often). Nothing here loops over names yet, but this is cheap
+    insurance against that crashing a future command that does."""
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 def _load_standards(args) -> list:
     if getattr(args, "from_raw", None):
         html = Path(args.from_raw).read_text(encoding="utf-8")
@@ -127,6 +139,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    _use_utf8_console()
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)
