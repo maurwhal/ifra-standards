@@ -19,18 +19,23 @@ from .diff import diff_standards, format_markdown, load_export
 from .export import to_records, write
 from .models import TYPE_LABELS, Standard
 from .parse import parse_standards
+from .pdf_detail import CATEGORIES, StandardDetail, fetch_all_details, fetch_standard_detail
 from .pdfs import download_pdfs
 
 __all__ = [
     "BASE",
+    "CATEGORIES",
     "TYPE_LABELS",
     "IFRAError",
     "Standard",
+    "StandardDetail",
     "__version__",
     "diff_standards",
     "discover_config",
     "download_pdfs",
+    "fetch_all_details",
     "fetch_raw_html",
+    "fetch_standard_detail",
     "fetch_standards",
     "format_markdown",
     "load_export",

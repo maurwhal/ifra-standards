@@ -68,6 +68,23 @@ Download every Standard PDF into a folder:
 ifra-standards pdfs ./pdfs
 ```
 
+Get the actual limits out of one Standard's PDF (the Maximum Acceptable
+Concentration for each category, the recommendation, and a few other fields).
+Needs one extra piece:
+`pip install "ifra-standards[pdf] @ git+https://github.com/maurwhal/ifra-standards"`
+
+```
+ifra-standards detail https://d3t14p1xronwr0.cloudfront.net/docs/standards/IFRA_STD_021.pdf
+```
+
+Get those limits for every Standard at once, one row per Standard. This opens
+every PDF, so it takes a few minutes; point it at a folder you already saved
+with `ifra-standards pdfs` and it reuses those instead of downloading again:
+
+```
+ifra-standards details --pdf-dir ./pdfs -o ifra_standards_details.csv
+```
+
 Compare two lists you saved at different times, to see what changed:
 
 ```
@@ -82,6 +99,13 @@ ifra-standards diff old.json new.json
 name,cas_numbers,type,type_label,amendment,publication_date,pdf_url
 Citral,5392-40-5 141-27-5 106-26-3,R,Restriction,49,2020-01,https://.../IFRA_STD_021.pdf
 Benzyl alcohol,100-51-6,R,Restriction,49,2020-01,https://.../IFRA_STD_014.pdf
+```
+
+`ifra-standards details` adds the actual limits, one column per category:
+
+```
+name,...,recommendation,category_1,category_2,...,category_12,...
+Citral,...,RESTRICTION,0.11 %,0.032 %,...,No Restriction,...
 ```
 
 The full list of columns and what they mean is in the help folder.

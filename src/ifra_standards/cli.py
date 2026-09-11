@@ -11,6 +11,7 @@ from .client import discover_config, fetch_raw_html
 from .diff import diff_standards, format_markdown, load_export
 from .export import write
 from .parse import parse_standards
+from .pdf_detail import DETAIL_FIELDS, fetch_all_details, fetch_standard_detail
 from .pdfs import download_pdfs
 
 
@@ -75,6 +76,57 @@ def _cmd_token(args) -> int:
     return 0
 
 
+def _cmd_detail(args) -> int:
+    import json
+
+    d = fetch_standard_detail(args.source)
+    out = json.dumps(d.to_dict(), indent=2, ensure_ascii=False)
+    if args.output:
+        Path(args.output).write_text(out + "\n", encoding="utf-8")
+        print(f"Saved to {args.output}", file=sys.stderr)
+    else:
+        print(out)
+    return 0
+
+
+def _cmd_details(args) -> int:
+    import csv
+    import json as jsonlib
+
+    if args.from_export:
+        standards = load_export(args.from_export)
+    else:
+        standards = parse_standards(fetch_raw_html(polite_delay=1.0))
+    if args.limit:
+        standards = standards[: args.limit]
+
+    rows = []
+    errors = 0
+    total = len(standards)
+    for i, row in enumerate(fetch_all_details(standards, pdf_dir=args.pdf_dir,
+                                              delay=args.delay), start=1):
+        if row["error"]:
+            errors += 1
+        print(f"  [{i}/{total}] {row['name']}"
+              + (f"  -- {row['error']}" if row["error"] else ""), file=sys.stderr)
+        rows.append(row)
+
+    fmt = args.format or Path(args.output).suffix.lstrip(".")
+    if fmt == "json":
+        Path(args.output).write_text(
+            jsonlib.dumps(rows, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+    else:
+        with open(args.output, "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(DETAIL_FIELDS))
+            w.writeheader()
+            w.writerows(rows)
+
+    print(f"Saved {total} standards ({errors} with an error reading the PDF) "
+          f"to {args.output}", file=sys.stderr)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="ifra-standards",
@@ -122,6 +174,32 @@ def build_parser() -> argparse.ArgumentParser:
 
     t = sub.add_parser("token", help="print the current access token (for troubleshooting)")
     t.set_defaults(func=_cmd_token)
+
+    e = sub.add_parser(
+        "detail",
+        help="read one Standard's PDF: its limits, recommendation, and other fields",
+    )
+    e.add_argument("source", help="a Standard PDF's web address, or a path to one you saved")
+    e.add_argument("-o", "--output", help="write to a file instead of the screen")
+    e.set_defaults(func=_cmd_detail)
+
+    a = sub.add_parser(
+        "details",
+        help="read every Standard's PDF: limits and other fields, one row each",
+    )
+    a.add_argument("-o", "--output", default="ifra_standards_details.csv",
+                   help="where to save it (default: %(default)s)")
+    a.add_argument("--format", choices=["csv", "json"],
+                   help="force the format instead of guessing from the file name")
+    a.add_argument("--from-export", metavar="PATH",
+                   help="use a saved .json list instead of fetching a new one")
+    a.add_argument("--pdf-dir", metavar="DIR",
+                   help="a folder of PDFs already saved with 'ifra-standards pdfs'; "
+                        "only what is missing gets downloaded")
+    a.add_argument("--limit", type=int, default=0, help="only the first N Standards")
+    a.add_argument("--delay", type=float, default=1.0,
+                   help="seconds between downloads (default: %(default)s)")
+    a.set_defaults(func=_cmd_details)
 
     return p
 
