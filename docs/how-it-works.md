@@ -94,32 +94,3 @@ attribute can't be found. The tool raises a clear error in that case. Please
 [open an issue](https://github.com/maurwhal/ifra-standards/issues) with the
 date and the message, and as a fallback you can always copy the table off the
 website by hand.
-
-## Reading one Standard's PDF (`detail` / `details`)
-
-Every Standard PDF (`.../docs/standards/IFRA_STD_XXX.pdf`) uses the same
-labeled layout: `CAS-No.:`, `Synonyms:`, `History:`, `Implementation dates:`,
-`RECOMMENDATION:`, then either a `MAXIMUM ACCEPTABLE CONCENTRATIONS IN THE
-FINISHED PRODUCT (%):` table (for a Restriction) or free text under
-`FRAGRANCE INGREDIENT PROHIBITION:` / `FRAGRANCE INGREDIENT SPECIFICATION:`,
-then `CONTRIBUTIONS FROM OTHER SOURCES:`, `INTRINSIC PROPERTY DRIVING RISK
-MANAGEMENT:`, and `REFERENCES:`. This holds across every amendment and
-Standard type checked while building this (Restriction, Prohibition,
-Specification, and combined Prohibition/Specification).
-
-`pdf_detail.py` downloads the PDF, reads its text with
-[pypdf](https://pypdf.readthedocs.io/), and pulls each field out between its
-label and whichever label comes next. The category table is read with a
-regular expression matching `Category <name> <value>` pairs (the value is
-either a percentage or "No Restriction").
-
-One wrinkle: every page repeats a running header ("Amendment 44 IFRA STANDARD
-&lt;title&gt; 2009 (Amendment 44) 2/2 IFRA STANDARD"). When a field's text runs
-across a page break, pypdf's page-by-page extraction puts that header in the
-middle of it. The tool strips that pattern back out before returning the
-field.
-
-`ifra-standards details` reuses a folder from `ifra-standards pdfs` if you
-point `--pdf-dir` at one, and otherwise downloads each PDF with a pause in
-between. If one Standard's PDF fails to download or read, that row gets an
-`error` column instead of stopping the whole run.

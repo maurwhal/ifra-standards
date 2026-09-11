@@ -5,16 +5,11 @@ Notable changes to this project. The format is based on
 
 ## [Unreleased]
 
-### Added
-- `ifra-standards detail`: read one Standard's PDF and pull out the Maximum
-  Acceptable Concentration for each category, the recommendation, the
-  prohibition or specification text, and a few other fields.
-- `ifra-standards details`: the same, for every Standard at once, one row per
-  Standard. Can reuse a folder already saved with `ifra-standards pdfs`
-  instead of downloading again; one Standard's PDF failing does not stop the
-  rest, it is noted in that row instead.
-- Python API: `fetch_standard_detail()`, `fetch_all_details()`.
-- New optional extra: `pip install "ifra-standards[pdf]"` (needs `pypdf`).
+### Changed
+- Reading a Standard's PDF for its Maximum Acceptable Concentrations (added
+  briefly, commit e7857e4) moved out into its own project,
+  [ifra-standards-maximum-acceptable-concentrations-MAC](https://github.com/maurwhal/ifra-standards-maximum-acceptable-concentrations-MAC).
+  This project stays the simple one: the list only.
 
 ## [0.1.0] - 2026-09-08
 

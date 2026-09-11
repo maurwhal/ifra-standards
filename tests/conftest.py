@@ -15,17 +15,3 @@ def sample_html() -> str:
 def library_page_html() -> str:
     """A minimal stand-in for the standards-library page with a config token."""
     return (FIXTURES / "library_page_stub.html").read_text(encoding="utf-8")
-
-
-@pytest.fixture
-def restriction_detail_text() -> str:
-    """A made-up Standard, in the real layout, with a Restriction and its
-    Maximum Acceptable Concentrations table. Not real IFRA content."""
-    return (FIXTURES / "detail_text_restriction.txt").read_text(encoding="utf-8")
-
-
-@pytest.fixture
-def prohibition_specification_detail_text() -> str:
-    """A made-up Standard combining a Prohibition and a Specification. Not real
-    IFRA content."""
-    return (FIXTURES / "detail_text_prohibition_specification.txt").read_text(encoding="utf-8")
